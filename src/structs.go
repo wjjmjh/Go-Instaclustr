@@ -1,5 +1,11 @@
 package src
 
+type Configuration struct {
+	Username      string `json:"username"`
+	API_KEY       string `json:"api_key"`
+	API_HOST_NAME string `json:"api_host_name"`
+}
+
 type Cluster struct {
 	ID                         string       `json:"id"`
 	ClusterName                string       `json:"clusterName"`
