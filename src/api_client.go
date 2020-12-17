@@ -69,6 +69,17 @@ func (c *APIClient) DeleteCluster(clusterID string) error {
 	return nil
 }
 
+func (c *APIClient) DeleteActivateClusters() error {
+	clusters, err := c.RetrieveActiveClusters()
+	if err != nil {
+		return err
+	}
+	for _, cluster := range *clusters {
+		c.DeleteCluster(cluster.ID)
+	}
+	return nil
+}
+
 func (c *APIClient) CreateCluster(data []byte) (string, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/extended/", c.apiServerHostname)
 	resp, err := c.MakeRequest(url, "POST", data)
