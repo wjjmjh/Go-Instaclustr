@@ -48,7 +48,7 @@ func (c *APIClient) RetrieveActiveClusters() (*[]Cluster, error) {
 		return nil, err
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 202 {
+	if resp.StatusCode != 200 {
 		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 	var clusters []Cluster
