@@ -68,3 +68,26 @@ func (c *APIClient) DeleteCluster(clusterID string) error {
 	}
 	return nil
 }
+
+func (c *APIClient) CreateCluster(data []byte) (string, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/extended/", c.apiServerHostname)
+	resp, err := c.MakeRequest(url, "POST", data)
+	if err != nil {
+		return "", err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return "", errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var respJson interface{}
+	var id string
+	err = json.Unmarshal(bodyText, &respJson)
+	if err != nil {
+		return "", err
+	}
+	respJsonData := respJson.(map[string]interface{})
+	for _, value := range respJsonData {
+		id = fmt.Sprintf("%v", value)
+	}
+	return id, nil
+}
