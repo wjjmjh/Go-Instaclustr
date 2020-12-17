@@ -55,3 +55,16 @@ func (c *APIClient) RetrieveActiveClusters() (*[]Cluster, error) {
 	json.Unmarshal(bodyText, &clusters)
 	return &clusters, nil
 }
+
+func (c *APIClient) DeleteCluster(clusterID string) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "DELETE", nil)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
+}
