@@ -2,6 +2,10 @@ package src
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -35,4 +39,19 @@ func (c *APIClient) MakeRequest(url string, method string, data []byte) (*http.R
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *APIClient) RetrieveActiveClusters() (*[]Cluster, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/", c.apiServerHostname)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var clusters []Cluster
+	json.Unmarshal(bodyText, &clusters)
+	return &clusters, nil
 }
