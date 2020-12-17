@@ -13,7 +13,7 @@ type Configuration struct {
 }
 
 func main() {
-	file, _ := os.Open("src/conf.json")
+	file, _ := os.Open("conf.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
 	configuration := Configuration{}
