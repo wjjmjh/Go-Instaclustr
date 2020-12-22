@@ -102,3 +102,16 @@ func (c *APIClient) CreateCluster(data []byte) (string, error) {
 	}
 	return id, nil
 }
+
+func (c *APIClient) DeleteEncryptionKey(keyID string) error {
+	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys/%s", c.apiServerHostname, keyID)
+	resp, err := c.MakeRequest(url, "DELETE", nil)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
+}
