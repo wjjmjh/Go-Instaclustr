@@ -56,6 +56,21 @@ func (c *APIClient) RetrieveActiveClusters() (*[]Cluster, error) {
 	return &clusters, nil
 }
 
+func (c *APIClient) ReadCluster(clusterID string) (*Cluster, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/%s", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var cluster Cluster
+	json.Unmarshal(bodyText, &cluster)
+	return &cluster, nil
+}
+
 func (c *APIClient) DeleteCluster(clusterID string) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "DELETE", nil)
